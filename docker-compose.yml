@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  subscription-service:
+    build:
+      context: ./subscriptionServices
+    container_name: subscription-service
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    volumes:
+      - ./subscriptionServices:/app
+    environment:
+      - API_TOKEN=1BoEamShYxjhjtL
+
+  user-service:
+    build:
+      context: ./userService
+    container_name: user-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./userService:/var/www/html
+    working_dir: /var/www/html
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=users
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: users
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
