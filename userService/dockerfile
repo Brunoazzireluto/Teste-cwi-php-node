@@ -13,7 +13,18 @@ RUN apt-get update && apt-get install -y \
     git \
     nano \
     libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+    && rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        pdo \
+        pdo_mysql \
+        mbstring \
+        zip \
+        exif \
+        pcntl \
+        gd \
+        bcmath
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -24,8 +35,15 @@ COPY . .
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
+    && chmod -R 755 /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache
+
+RUN mkdir -p /var/www/html/storage/logs \
+    && mkdir -p /var/www/html/storage/framework/cache \
+    && mkdir -p /var/www/html/storage/framework/sessions \
+    && mkdir -p /var/www/html/storage/framework/views
 
 EXPOSE 8000
 
-CMD php artisan serve --host=0.0.0.0 --port=8000
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

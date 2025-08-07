@@ -12,3 +12,7 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
 });
+
+//        php artisan session:table -> erro de tabela session
+
+//        php artisan migrate

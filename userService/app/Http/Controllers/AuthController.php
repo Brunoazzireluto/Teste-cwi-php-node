@@ -5,20 +5,52 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
         $credentials = $request->only('email', 'password');
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Invalid credentials'], 401);
         }
 
-        return response()->json(data: [
-            'token' => $token,
-            'user' => auth()->user(),
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->user()
+        ]);
+    }
+
+    public function logout()
+    {
+        auth()->logout();
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    public function me()
+    {
+        return response()->json(auth()->user());
+    }
+
+    public function refresh()
+    {
+        return response()->json([
+            'access_token' => auth()->refresh(),
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
 }
