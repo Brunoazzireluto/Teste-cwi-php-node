@@ -4,8 +4,8 @@ import { getSubscriptionByEmail } from './models/subscription';
 
 const router = Router();
 
-router.get('/subscriptions/', authMiddleware, (req, res) => {
-  const { email } = req.body as { email: string }
+router.get('/subscriptions/:email', authMiddleware, (req, res) => {
+  const { email } = req.params as { email: string }
   const sub = getSubscriptionByEmail(email)
 
   if (!sub) {
