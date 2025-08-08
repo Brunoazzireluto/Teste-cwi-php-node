@@ -15,77 +15,75 @@ Esse é um diagrama simples da estrutura do banco de dados.
 
 ### Documentação de rotas
 
-O Arquivo Rotas.md contem os detalhes das rotas e quais paramentos as rotas esperam. 
+O Arquivo [Rotas.md](Docs/Rotas.md) contem os detalhes das rotas e quais paramentos as rotas esperam. 
 
+Dentro da pasta Docs também há o arquivo de exportação do Postman; só é preciso alterar a URL para que as rotas funcionem corretamente.
 
 ### Serviços 
 
-    #### userService
-        - Serviço feito com Laravel para ser utilizado  como ponto focal dos usuários, criação, edição, e entre outros serão todos utilizados a partir deste Serviço
+  #### userService
+    Serviço feito com Laravel para ser utilizado  como ponto focal dos usuários, criação, edição, e entre outros serão todos utilizados a partir deste Serviço
 
-    #### subscriptionService
-        - Serviço em Node que irá retorar as informações de assinatura de um serviço com base no Email do usuário
-
+  #### subscriptionService
+    Serviço em Node que irá retorar as informações de assinatura de um serviço com base no Email do usuário
 
 
 ## Variáveis de Ambiente
 
-Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env
+Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env 
 
-`API_KEY`
+### subscriptionService
+```
+PORT=3000
+API_TOKEN=1BoEamShYxjhjtL
+``` 
 
-`ANOTHER_API_KEY`
+### userService
+APP_URL=http://localhost:8000
+API_SUBSCRIPTION_URL=url_da_aplicação_node/api/subscriptions/
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=usersServices
+DB_USERNAME=root
+DB_PASSWORD=root
 
 
 
-## Deploy
+## Rodar Localmente. 
 
-Para fazer o deploy desse projeto rode
+Para Rodarmos as duas aplicações, primeiro devemos criar os .env em seus respectivos Serviços, após isso 
+podemos rodar o comando
 
-```bash
-  npm run deploy
+
+```
+docker-compose up -d --build
+```
+
+Podemos enfrentar alguns problemas, relacionados a API_KEY da aplicação, caso encontre basta rodar o seguinte comando
+
+```
+docker compose exec user-service php artisan key:generate
+```
+ou fora do docker apenas
+```
+php artisan key:generate
 ```
 
 
-## Documentação da API subscriptionsService
+Após isso rodamos as  migrations e seeds para popularmos o banco de dados e termos alguns dados para trabalharmos
 
-
-#### Status da Api
-
-```http
-  GET /api/health
 ```
-Retorno:
-
-```json
-{
-    "status": "ok"
-}
+docker compose exec user-service php artisan migrate
+docker compose exec user-service php artisan db:seed
 ```
 
-#### Retorna uma assinatura
+após isso rodamos o comando:
 
-```http
-  GET /api/subscriptions
 ```
-
-| header   | Tipo       | Descrição                                   |
-| :---------- | :--------- | :------------------------------------------ |
-| `authorization`      | `string` | **Obrigatório**. a Api key do sistema |
-
-retorno: 
-
-```json
-{
-    "id": 3,
-    "email": "nami@email.com",
-    "plan": "Basic",
-    "status": "active",
-    "startedAt": "2022-01-31",
-    "renewalDate": "2026-01-31",
-    "paymentMethod": "credit_card"
-}
+docker compose up
 ```
+e os dois sistemas estarão prontos para serem utilizados
 
 
 ## Ferramentas Utilizadas
@@ -100,7 +98,6 @@ retorno:
 
 ![Laravel](https://img.shields.io/badge/laravel-%23FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 
-![JWT](https://img.shields.io/badge/-jwt-%23000?style=for-the-badge&logo=json%20web%20tokens&logoColor=white)
 
 
 ## Autores
