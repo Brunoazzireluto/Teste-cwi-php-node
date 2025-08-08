@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'subscription_api' => [
+        'url' => env('API_SUBSCRIPTION_URL'),
+        'token' => env('API_SUBSCRIPTION_TOKEN', '1BoEamShYxjhjtL'),
+    ],
+
 ];
