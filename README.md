@@ -39,6 +39,7 @@ API_TOKEN=1BoEamShYxjhjtL
 ``` 
 
 ### userService
+```
 APP_URL=http://localhost:8000
 API_SUBSCRIPTION_URL=url_da_aplicação_node/api/subscriptions/
 DB_CONNECTION=mysql
@@ -47,7 +48,7 @@ DB_PORT=3306
 DB_DATABASE=usersServices
 DB_USERNAME=root
 DB_PASSWORD=root
-
+```
 
 
 ## Rodar Localmente. 
